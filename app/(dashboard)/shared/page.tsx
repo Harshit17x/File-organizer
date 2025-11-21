@@ -11,8 +11,6 @@ export default function SharedPage() {
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState("");
 
-    const [debugInfo, setDebugInfo] = useState<any>(null);
-
     useEffect(() => {
         loadSharedFiles();
     }, []);
@@ -20,22 +18,11 @@ export default function SharedPage() {
     const loadSharedFiles = async () => {
         try {
             setIsLoading(true);
-            // Debug: Get current user
-            const { supabase } = await import('@/lib/supabase/client');
-            const { data: { user } } = await supabase.auth.getUser();
-
             const data = await getSharedFiles();
             setFiles(data);
-
-            setDebugInfo({
-                currentUser: user?.email,
-                filesFound: data.length,
-                timestamp: new Date().toISOString()
-            });
         } catch (err: any) {
             console.error("Failed to load shared files:", err);
-            setError("Failed to load shared files: " + err.message);
-            setDebugInfo({ error: err.message });
+            setError("Failed to load shared files");
         } finally {
             setIsLoading(false);
         }
@@ -83,11 +70,6 @@ export default function SharedPage() {
                 </div>
             )}
 
-            {/* DEBUG INFO - TEMPORARY */}
-            <div className="p-4 rounded-lg bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-mono mb-4">
-                <p><strong>Debug Info:</strong></p>
-                <pre>{JSON.stringify(debugInfo, null, 2)}</pre>
-            </div>
 
             {files.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-16 text-center">
