@@ -29,8 +29,13 @@ export async function getAllSubjects(): Promise<Subject[]> {
 }
 
 export async function getSubjectById(id: string): Promise<Subject | null> {
+    console.log(`[getSubjectById] Fetching subject: ${id}`);
     const { data: { user } } = await supabase.auth.getUser();
-    if (!user) throw new Error('Not authenticated');
+    if (!user) {
+        console.error('[getSubjectById] Not authenticated');
+        throw new Error('Not authenticated');
+    }
+    console.log(`[getSubjectById] User ID: ${user.id}`);
 
     const { data, error } = await supabase
         .from('subjects')
@@ -41,10 +46,12 @@ export async function getSubjectById(id: string): Promise<Subject | null> {
         .single();
 
     if (error) {
+        console.error(`[getSubjectById] Error fetching subject:`, error);
         if (error.code === 'PGRST116') return null; // Not found
         throw error;
     }
 
+    console.log(`[getSubjectById] Found subject:`, data);
     return {
         id: data.id,
         name: data.name,
