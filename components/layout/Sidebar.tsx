@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, Folder, Star, Trash2, Settings, Menu } from "lucide-react";
+import { Home, Folder, Star, Trash2, Settings, Menu, Share2 } from "lucide-react";
 import { useState } from "react";
 import { StorageIndicator } from '../ui/StorageIndicator';
 import { clsx } from "clsx";
@@ -11,6 +11,7 @@ import { twMerge } from "tailwind-merge";
 const navItems = [
   { name: "Home", href: "/", icon: Home },
   { name: "All Subjects", href: "/subjects", icon: Folder },
+  { name: "Shared with Me", href: "/shared", icon: Share2 },
   { name: "Favorites", href: "/favorites", icon: Star },
   { name: "Trash", href: "/trash", icon: Trash2 },
   { name: "Settings", href: "/settings", icon: Settings },

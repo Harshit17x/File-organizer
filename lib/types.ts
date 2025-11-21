@@ -16,4 +16,5 @@ export interface FileData {
     uploadedAt: string;
     isFavorite: boolean;
     storagePath: string;
+    isShared?: boolean;
 }

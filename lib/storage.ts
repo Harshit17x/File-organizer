@@ -467,3 +467,65 @@ export async function searchFiles(query: string): Promise<FileData[]> {
         storagePath: f.storage_path,
     }));
 }
+
+// ========================================
+// SHARING OPERATIONS
+// ========================================
+
+export async function shareFile(fileId: string, email: string): Promise<void> {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error('Not authenticated');
+
+    const { error } = await supabase
+        .from('shared_files')
+        .insert({
+            file_id: fileId,
+            shared_by: user.id,
+            shared_with_email: email,
+        });
+
+    if (error) {
+        if (error.code === '23505') { // Unique violation
+            throw new Error('File is already shared with this user');
+        }
+        throw error;
+    }
+}
+
+export async function getSharedFiles(): Promise<FileData[]> {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error('Not authenticated');
+
+    // Get files shared with current user's email
+    const { data: sharedRecords, error: sharedError } = await supabase
+        .from('shared_files')
+        .select('file_id')
+        .eq('shared_with_email', user.email);
+
+    if (sharedError) throw sharedError;
+
+    if (!sharedRecords || sharedRecords.length === 0) return [];
+
+    const fileIds = sharedRecords.map(r => r.file_id);
+
+    // Fetch the actual files
+    const { data: files, error: filesError } = await supabase
+        .from('files')
+        .select('*')
+        .in('id', fileIds)
+        .eq('is_trashed', false);
+
+    if (filesError) throw filesError;
+
+    return files.map(f => ({
+        id: f.id,
+        name: f.name,
+        size: f.size,
+        type: f.type,
+        subjectId: f.subject_id,
+        uploadedAt: f.created_at,
+        isFavorite: f.is_favorite,
+        storagePath: f.storage_path,
+        isShared: true // Flag to indicate this is a shared file
+    }));
+}
