@@ -476,12 +476,15 @@ export async function shareFile(fileId: string, email: string): Promise<void> {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) throw new Error('Not authenticated');
 
+    // Normalize email
+    const normalizedEmail = email.toLowerCase().trim();
+
     const { error } = await supabase
         .from('shared_files')
         .insert({
             file_id: fileId,
             shared_by: user.id,
-            shared_with_email: email,
+            shared_with_email: normalizedEmail,
         });
 
     if (error) {
@@ -496,17 +499,26 @@ export async function getSharedFiles(): Promise<FileData[]> {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) throw new Error('Not authenticated');
 
+    console.log('[getSharedFiles] Checking shares for:', user.email);
+
     // Get files shared with current user's email
     const { data: sharedRecords, error: sharedError } = await supabase
         .from('shared_files')
         .select('file_id')
-        .eq('shared_with_email', user.email);
+        .eq('shared_with_email', user.email?.toLowerCase());
 
-    if (sharedError) throw sharedError;
+    if (sharedError) {
+        console.error('[getSharedFiles] Error fetching shares:', sharedError);
+        throw sharedError;
+    }
 
-    if (!sharedRecords || sharedRecords.length === 0) return [];
+    if (!sharedRecords || sharedRecords.length === 0) {
+        console.log('[getSharedFiles] No shared files found');
+        return [];
+    }
 
     const fileIds = sharedRecords.map(r => r.file_id);
+    console.log('[getSharedFiles] Found file IDs:', fileIds);
 
     // Fetch the actual files
     const { data: files, error: filesError } = await supabase
