@@ -15,6 +15,9 @@ Copy the URL of your new repository (it looks like `https://github.com/username/
 Then run the following commands in your terminal:
 
 ```bash
+# IMPORTANT: Make sure you are in the project folder
+cd "file-organizer"
+
 # 1. Stage all files
 git add .
 

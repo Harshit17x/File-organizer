@@ -1,5 +1,5 @@
 import { openDB, DBSchema, IDBPDatabase } from 'idb';
-import { Subject, FileData } from './storage';
+import { Subject, FileData } from './types';
 
 // Define the database schema
 interface FileOrganizerDB extends DBSchema {
