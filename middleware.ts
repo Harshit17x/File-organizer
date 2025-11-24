@@ -9,8 +9,8 @@ export async function middleware(request: NextRequest) {
     });
 
     const supabase = createServerClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co',
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder',
+        process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://hjmlhzoxvaglgdzibwxn.supabase.co',
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhqbWxoem94dmFnbGdkemlid3huIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjM2MjUxMDAsImV4cCI6MjA3OTIwMTEwMH0.F6Vwyfq_hK21ha-PZt7tZ4gbGoV7BQiIRqgXa339NgE',
         {
             cookies: {
                 get(name: string) {
